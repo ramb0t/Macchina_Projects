@@ -17,19 +17,20 @@ cAcquireCAN CANport0(CAN_PORT_0);
 /***** DEFINITIONS FOR OBD MESSAGES ON CAN PORT 0, see https://en.wikipedia.org/wiki/OBD-II_PIDs to add your own ***************/
 //char _name[10], char _units[10], OBD_PID pid,  uint8_t OBD_PID_SIZE size, bool _signed, OBD_MODE_REQ mode, float32 slope, float32 offset, cAcquireCAN *, extended ID;
 
-  cOBDParameter OBD_Speed(      "Speed "        , " KPH"		,  SPEED       , _8BITS,   false,   CURRENT,  1,      0,  &CANport0, false);
+  //cOBDParameter OBD_Speed(      "Speed "        , " KPH"		,  SPEED       , _8BITS,   false,   CURRENT,  1,      0,  &CANport0, false);
   cOBDParameter OBD_EngineSpeed("Engine Speed " , " RPM"		,  ENGINE_RPM  , _16BITS,  false,   CURRENT,  0.25,   0,  &CANport0, false);
   cOBDParameter OBD_Throttle(   "Throttle "     , " %"  		,  THROTTLE_POS, _8BITS,   false,   CURRENT,  0.3922, 0,  &CANport0, false);
-  cOBDParameter OBD_Coolant(    "Coolant "      , " C"  		,  COOLANT_TEMP, _8BITS,   false ,  CURRENT,  1,    -40,  &CANport0, false);
+  //cOBDParameter OBD_Coolant(    "Coolant "      , " C"  		,  COOLANT_TEMP, _8BITS,   false ,  CURRENT,  1,    -40,  &CANport0, false);
   cOBDParameter OBD_EngineLoad( "Load "         , " %"  		,  ENGINE_LOAD , _8BITS,   false,   CURRENT,  0.3922, 0,  &CANport0, false);
   cOBDParameter OBD_MAF(        "MAF "          , " grams/s",  ENGINE_MAF  , _16BITS,  false,   CURRENT,  0.01,   0,  &CANport0, false);
+  cOBDParameter OBD_MAP(        "MAP "          , " kPa"    ,  ENGINE_MAP  , _8BITS,   false,   CURRENT,  1,      0,  &CANport0, false);
   cOBDParameter OBD_IAT(        "IAT "          , " C"  		,  ENGINE_IAT  , _8BITS,   false ,  CURRENT,  1,    -40,  &CANport0, false);
 
 void setup()
 {
   delay(2000); //allow USB time to settle
 	//output pin that can be used for debugging purposes
-	pinMode(13, OUTPUT);      
+	pinMode(RGB_GREEN, OUTPUT);      
 
 	//start serial port 
 	Serial.begin(115200);
@@ -42,7 +43,7 @@ void setup()
   Serial3.println("System Reset");
        
   //start CAN ports,  enable interrupts and RX masks, set the baud rate here
-	CANport0.initialize(AUTOBAUD);
+	CANport0.initialize(_500K);
 
   //set up the transmission/reception of messages to occur at 500Hz (2mS) timer interrupt
   Timer3.attachInterrupt(PrintScreen).setFrequency(1).start();
@@ -55,19 +56,19 @@ UINT32 maxTime;
 
 void loop()
 {
-  Serial3.println("Waiting...");
-CANport0.run(POLLING);
+  CANport0.run(POLLING);
 
 }
 
 //this is our timer interrupt handler, called at XmS interval
 void PrintScreen()
 {
+  digitalWrite(RGB_GREEN, LOW);
 
 	//print out our latest OBDII data
-	Serial.print(OBD_Speed.getName()); 
-	Serial.print(OBD_Speed.getData());
-	Serial.println(OBD_Speed.getUnits()); 	
+//	Serial.print(OBD_Speed.getName()); 
+//	Serial.print(OBD_Speed.getData());
+//	Serial.println(OBD_Speed.getUnits()); 	
 
     Serial.print(OBD_EngineSpeed.getName()); 
 	Serial.print(OBD_EngineSpeed.getData());
@@ -77,10 +78,9 @@ void PrintScreen()
 	Serial.print(OBD_Throttle.getData());
 	Serial.println(OBD_Throttle.getUnits()); 
     
-	Serial.print(OBD_Coolant.getName()); 
-	Serial.print(OBD_Coolant.getData());
-	Serial.println(OBD_Coolant.getUnits()); 
-	
+//	Serial.print(OBD_Coolant.getName()); 
+//	Serial.print(OBD_Coolant.getData());
+//	Serial.println(OBD_Coolant.getUnits()); 
 
 	Serial.print(OBD_EngineLoad.getName()); 
 	Serial.print(OBD_EngineLoad.getData());
@@ -90,11 +90,19 @@ void PrintScreen()
 	Serial.print(OBD_MAF.getData());
 	Serial.println(OBD_MAF.getUnits()); 
 
+  Serial.print(OBD_MAP.getName()); 
+  Serial.print(OBD_MAP.getData());
+  Serial.println(OBD_MAP.getUnits()); 
+  byte byt = OBD_MAP.getIntData();
+  Serial3.write(byt);
+
 	Serial.print(OBD_IAT.getName()); 
 	Serial.print(OBD_IAT.getData());
 	Serial.println(OBD_IAT.getUnits());         	
 
   Serial.println();
   Serial.println();
+  
+  digitalWrite(RGB_GREEN, HIGH);
 }
 
