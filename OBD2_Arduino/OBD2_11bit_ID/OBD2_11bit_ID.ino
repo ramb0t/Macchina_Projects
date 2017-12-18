@@ -30,7 +30,11 @@ void setup()
 {
   delay(2000); //allow USB time to settle
 	//output pin that can be used for debugging purposes
-	pinMode(RGB_GREEN, OUTPUT);      
+	pinMode(RGB_GREEN, OUTPUT);  
+  pinMode(GPIO1    , OUTPUT);
+  pinMode(I_SENSE_EN, OUTPUT);
+  digitalWrite(GPIO1 , HIGH);
+  digitalWrite(I_SENSE_EN, HIGH);      
 
 	//start serial port 
 	Serial.begin(115200);
