@@ -1,5 +1,8 @@
 #include <OBD2.h>
 #include <DueTimer.h>
+
+//Serial Tx 
+#include <EasyTransfer.h>
 /********************************************************************
 This example is built upon the CANAcquisition class and the OBDParmameter class using 11bit (non-extended) OBD2 ID's
 
@@ -26,9 +29,26 @@ cAcquireCAN CANport0(CAN_PORT_0);
   cOBDParameter OBD_MAP(        "MAP "          , " kPa"    ,  ENGINE_MAP  , _8BITS,   false,   CURRENT,  1,      0,  &CANport0, false);
   //cOBDParameter OBD_IAT(        "IAT "          , " C"  		,  ENGINE_IAT  , _8BITS,   false ,  CURRENT,  1,    -40,  &CANport0, false);
 
+
+// Serial Tx Struct setup
+//create object
+EasyTransfer ET; 
+
+struct SEND_DATA_STRUCTURE{
+  //put your variable definitions here for the data you want to send
+  //THIS MUST BE EXACTLY THE SAME ON THE OTHER ARDUINO
+  uint8_t boost;
+  uint8_t throttle;
+  uint8_t injector;
+  uint8_t timing;
+};
+
+//give a name to the group of data
+SEND_DATA_STRUCTURE mydata;
+
 void setup()
 {
-  delay(2000); //allow USB time to settle
+  delay(500); //allow USB time to settle
 	//output pin that can be used for debugging purposes
 	pinMode(RGB_GREEN, OUTPUT);  
   pinMode(GPIO1    , OUTPUT);
@@ -45,6 +65,9 @@ void setup()
 	//debugging message for monitor to indicate CPU resets are occuring
 	Serial.println("System Reset");
   Serial3.println("System Reset");
+
+  //start the library, pass in the data details and the name of the serial port. Can be Serial, Serial1, Serial2, etc.
+  ET.begin(details(mydata), &Serial3);
        
   //start CAN ports,  enable interrupts and RX masks, set the baud rate here
 	CANport0.initialize(_500K);
@@ -98,7 +121,13 @@ void PrintScreen()
   Serial.print(OBD_MAP.getData());
   Serial.println(OBD_MAP.getUnits()); 
   byte byt = OBD_MAP.getIntData();
-  Serial3.write(byt);
+  //Serial3.write(byt);
+    //this is how you access the variables. [name of the group].[variable name]
+  mydata.boost = byt;
+  //send the data
+  digitalWrite(RGB_BLUE, LOW);
+  ET.sendData();
+  digitalWrite(RGB_BLUE, HIGH);
 //
 //	Serial.print(OBD_IAT.getName()); 
 //	Serial.print(OBD_IAT.getData());
