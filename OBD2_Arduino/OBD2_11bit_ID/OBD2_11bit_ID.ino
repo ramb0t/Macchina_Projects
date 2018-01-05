@@ -1,7 +1,7 @@
 #include <OBD2.h>
 #include <DueTimer.h>
 
-//Serial Tx 
+//Serial Tx using EasyTransfer lib
 #include <EasyTransfer.h>
 /********************************************************************
 This example is built upon the CANAcquisition class and the OBDParmameter class using 11bit (non-extended) OBD2 ID's
@@ -22,7 +22,8 @@ cAcquireCAN CANport0(CAN_PORT_0);
 
   //cOBDParameter OBD_Speed(      "Speed "        , " KPH"		,  SPEED       , _8BITS,   false,   CURRENT,  1,      0,  &CANport0, false);
   //cOBDParameter OBD_EngineSpeed("Engine Speed " , " RPM"		,  ENGINE_RPM  , _16BITS,  false,   CURRENT,  0.25,   0,  &CANport0, false);
- //cOBDParameter OBD_Throttle(   "Throttle "     , " %"  		,  THROTTLE_POS, _8BITS,   false,   CURRENT,  0.3922, 0,  &CANport0, false);
+  cOBDParameter OBD_Throttle(   "Throttle "     , " %"  		,  THROTTLE_POS, _8BITS,   false,   CURRENT,  0.3922, 0,  &CANport0, false);
+  cOBDParameter OBD_Timing(   "Timing "     , " deg"      ,  TIMING_ADV, _8BITS,   false,   CURRENT,  0.5, 0,  &CANport0, false);
   //cOBDParameter OBD_Coolant(    "Coolant "      , " C"  		,  COOLANT_TEMP, _8BITS,   false ,  CURRENT,  1,    -40,  &CANport0, false);
   //cOBDParameter OBD_EngineLoad( "Load "         , " %"  		,  ENGINE_LOAD , _8BITS,   false,   CURRENT,  0.3922, 0,  &CANport0, false);
   //cOBDParameter OBD_MAF(        "MAF "          , " grams/s",  ENGINE_MAF  , _16BITS,  false,   CURRENT,  0.01,   0,  &CANport0, false);
@@ -101,9 +102,15 @@ void PrintScreen()
 //	Serial.print(OBD_EngineSpeed.getData());
 //	Serial.println(OBD_EngineSpeed.getUnits()); 
 //
-//	Serial.print(OBD_Throttle.getName()); 
-//	Serial.print(OBD_Throttle.getData());
-//	Serial.println(OBD_Throttle.getUnits()); 
+	Serial.print(OBD_Throttle.getName()); 
+	Serial.print(OBD_Throttle.getData());
+	Serial.println(OBD_Throttle.getUnits()); 
+  mydata.throttle = OBD_Throttle.getIntData(); 
+
+  Serial.print(OBD_Timing.getName()); 
+  Serial.print(OBD_Timing.getData());
+  Serial.println(OBD_Timing.getUnits()); 
+  mydata.timing = OBD_Timing.getIntData(); 
 //    
 //	Serial.print(OBD_Coolant.getName()); 
 //	Serial.print(OBD_Coolant.getData());
@@ -125,9 +132,7 @@ void PrintScreen()
     //this is how you access the variables. [name of the group].[variable name]
   mydata.boost = byt;
   //send the data
-  digitalWrite(RGB_BLUE, LOW);
-  ET.sendData();
-  digitalWrite(RGB_BLUE, HIGH);
+
 //
 //	Serial.print(OBD_IAT.getName()); 
 //	Serial.print(OBD_IAT.getData());
@@ -135,6 +140,11 @@ void PrintScreen()
 
   Serial.println();
   Serial.println();
+
+  // send data to display
+  digitalWrite(RGB_BLUE, LOW);
+  ET.sendData();
+  digitalWrite(RGB_BLUE, HIGH);
   
   digitalWrite(RGB_GREEN, HIGH);
 }
