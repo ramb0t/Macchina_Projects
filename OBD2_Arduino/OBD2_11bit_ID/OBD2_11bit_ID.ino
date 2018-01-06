@@ -74,7 +74,7 @@ void setup()
 	CANport0.initialize(_500K);
 
   //set up the transmission/reception of messages to occur at 500Hz (2mS) timer interrupt
-  Timer3.attachInterrupt(PrintScreen).setFrequency(20).start();
+  Timer3.attachInterrupt(PrintScreen).setFrequency(50).start();
 
 }
 
@@ -102,14 +102,14 @@ void PrintScreen()
 //	Serial.print(OBD_EngineSpeed.getData());
 //	Serial.println(OBD_EngineSpeed.getUnits()); 
 //
-	Serial.print(OBD_Throttle.getName()); 
-	Serial.print(OBD_Throttle.getData());
-	Serial.println(OBD_Throttle.getUnits()); 
+	//Serial.print(OBD_Throttle.getName()); 
+	//Serial.print(OBD_Throttle.getData());
+	//Serial.println(OBD_Throttle.getUnits()); 
   mydata.throttle = OBD_Throttle.getIntData(); 
 
-  Serial.print(OBD_Timing.getName()); 
-  Serial.print(OBD_Timing.getData());
-  Serial.println(OBD_Timing.getUnits()); 
+  //Serial.print(OBD_Timing.getName()); 
+  //Serial.print(OBD_Timing.getData());
+  //Serial.println(OBD_Timing.getUnits()); 
   mydata.timing = OBD_Timing.getIntData(); 
 //    
 //	Serial.print(OBD_Coolant.getName()); 
@@ -127,11 +127,8 @@ void PrintScreen()
   Serial.print(OBD_MAP.getName()); 
   Serial.print(OBD_MAP.getData());
   Serial.println(OBD_MAP.getUnits()); 
-  byte byt = OBD_MAP.getIntData();
-  //Serial3.write(byt);
-    //this is how you access the variables. [name of the group].[variable name]
-  mydata.boost = byt;
-  //send the data
+  mydata.boost = OBD_MAP.getIntData();
+
 
 //
 //	Serial.print(OBD_IAT.getName()); 
