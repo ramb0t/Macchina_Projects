@@ -33,7 +33,7 @@ typedef unsigned long long UINT64;
 #define  MAX_NUM_RX_MSGS 30  
 
 //if implementing a query-response protocol (such as OBD2), delay this long (mS) in between requests
-#define  QUERY_MS 100  
+#define  QUERY_MS 50  
 
 /**
  *	forward declare the OBD class to the base class to support circular reference
@@ -60,11 +60,9 @@ enum ACQ_BAUD_RATE
     _250K  = 250,
     _125K  = 125,
     _50K   = 50,
-	_33k   = 33,
-    _25K   = 25,
-    _10K   = 10,
-    _5K    = 5,
-    NONE   = 0
+    _33k   = 33,
+    NONE   = 0,
+    AUTOBAUD = 0
 };
 
 /**
@@ -193,7 +191,7 @@ public:
      *
      * @return - a flag to accept or reject this CAN frame  
      */
-    virtual bool CallbackRx(RX_CAN_FRAME *R)
+    virtual bool CallbackRx(CAN_FRAME *R)
     {
         return(true);
     };
