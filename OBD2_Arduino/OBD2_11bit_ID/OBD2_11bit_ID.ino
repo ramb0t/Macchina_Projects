@@ -49,7 +49,9 @@ SEND_DATA_STRUCTURE mydata;
 
 void setup()
 {
-  delay(500); //allow USB time to settle
+  pinMode(PS_BUCK, OUTPUT);
+  digitalWrite(PS_BUCK, HIGH);
+ 
 	//output pin that can be used for debugging purposes
 	pinMode(RGB_GREEN, OUTPUT);  
   pinMode(GPIO1    , OUTPUT);
@@ -58,13 +60,14 @@ void setup()
   digitalWrite(I_SENSE_EN, HIGH);      
 
 	//start serial port 
-	Serial.begin(115200);
+	SerialUSB.begin(115200);
+  delay(500); //allow USB time to settle
 
   //start the second serial
   Serial3.begin(115200);
 
 	//debugging message for monitor to indicate CPU resets are occuring
-	Serial.println("System Reset");
+	SerialUSB.println("System Reset");
   Serial3.println("System Reset");
 
   //start the library, pass in the data details and the name of the serial port. Can be Serial, Serial1, Serial2, etc.
@@ -74,7 +77,7 @@ void setup()
 	CANport0.initialize(_500K);
 
   //set up the transmission/reception of messages to occur at 500Hz (2mS) timer interrupt
-  Timer3.attachInterrupt(PrintScreen).setFrequency(50).start();
+  Timer3.attachInterrupt(PrintScreen).setFrequency(20).start();
 
 }
 
@@ -94,49 +97,49 @@ void PrintScreen()
   digitalWrite(RGB_GREEN, LOW);
 
 	//print out our latest OBDII data
-//	Serial.print(OBD_Speed.getName()); 
-//	Serial.print(OBD_Speed.getData());
-//	Serial.println(OBD_Speed.getUnits()); 	
+//	SerialUSB.print(OBD_Speed.getName()); 
+//	SerialUSB.print(OBD_Speed.getData());
+//	SerialUSB.println(OBD_Speed.getUnits()); 	
 
-//    Serial.print(OBD_EngineSpeed.getName()); 
-//	Serial.print(OBD_EngineSpeed.getData());
-//	Serial.println(OBD_EngineSpeed.getUnits()); 
+//    SerialUSB.print(OBD_EngineSpeed.getName()); 
+//	SerialUSB.print(OBD_EngineSpeed.getData());
+//	SerialUSB.println(OBD_EngineSpeed.getUnits()); 
 //
-	//Serial.print(OBD_Throttle.getName()); 
-	//Serial.print(OBD_Throttle.getData());
-	//Serial.println(OBD_Throttle.getUnits()); 
+	//SerialUSB.print(OBD_Throttle.getName()); 
+	//SerialUSB.print(OBD_Throttle.getData());
+	//SerialUSB.println(OBD_Throttle.getUnits()); 
   //mydata.throttle = OBD_Throttle.getIntData(); 
 
-  //Serial.print(OBD_Timing.getName()); 
-  //Serial.print(OBD_Timing.getData());
-  //Serial.println(OBD_Timing.getUnits()); 
+  //SerialUSB.print(OBD_Timing.getName()); 
+  //SerialUSB.print(OBD_Timing.getData());
+  //SerialUSB.println(OBD_Timing.getUnits()); 
   mydata.timing = OBD_Timing.getIntData(); 
 //    
-//	Serial.print(OBD_Coolant.getName()); 
-//	Serial.print(OBD_Coolant.getData());
-//	Serial.println(OBD_Coolant.getUnits()); 
+//	SerialUSB.print(OBD_Coolant.getName()); 
+//	SerialUSB.print(OBD_Coolant.getData());
+//	SerialUSB.println(OBD_Coolant.getUnits()); 
 //
-//	Serial.print(OBD_EngineLoad.getName()); 
-//	Serial.print(OBD_EngineLoad.getData());
-//	Serial.println(OBD_EngineLoad.getUnits()); 
+//	SerialUSB.print(OBD_EngineLoad.getName()); 
+//	SerialUSB.print(OBD_EngineLoad.getData());
+//	SerialUSB.println(OBD_EngineLoad.getUnits()); 
 //
-//	Serial.print(OBD_MAF.getName()); 
-//	Serial.print(OBD_MAF.getData());
-//	Serial.println(OBD_MAF.getUnits()); 
+//	SerialUSB.print(OBD_MAF.getName()); 
+//	SerialUSB.print(OBD_MAF.getData());
+//	SerialUSB.println(OBD_MAF.getUnits()); 
 
-  Serial.print(OBD_MAP.getName()); 
-  Serial.print(OBD_MAP.getData());
-  Serial.println(OBD_MAP.getUnits()); 
+  SerialUSB.print(OBD_MAP.getName()); 
+  SerialUSB.print(OBD_MAP.getData());
+  SerialUSB.println(OBD_MAP.getUnits()); 
   mydata.boost = OBD_MAP.getIntData();
 
 
 //
-//	Serial.print(OBD_IAT.getName()); 
-//	Serial.print(OBD_IAT.getData());
-//	Serial.println(OBD_IAT.getUnits());         	
+//	SerialUSB.print(OBD_IAT.getName()); 
+//	SerialUSB.print(OBD_IAT.getData());
+//	SerialUSB.println(OBD_IAT.getUnits());         	
 
-  Serial.println();
-  Serial.println();
+  SerialUSB.println();
+  SerialUSB.println();
 
   // send data to display
   digitalWrite(RGB_BLUE, LOW);
